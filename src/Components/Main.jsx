@@ -1,8 +1,14 @@
 import { Col, Row, Card } from "react-bootstrap";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import SingleAlbum from "./Card";
 
 const Main = () => {
+  const [artist1, setArtist1] = useState();
+  const [artist2, setArtist2] = useState();
+  const [artist3, setArtist3] = useState();
+  const [artist4, setArtist4] = useState();
+
   let rockArtists = [
     "queen",
     "u2",
@@ -13,17 +19,18 @@ const Main = () => {
     "thewho",
     "bonjovi",
   ];
+
   const dispatch = useDispatch();
   const fetchedAlbums = useSelector((state) => state.albums);
   console.log(fetchedAlbums);
-  const fetchAlbum = async () => {
+  const fetchAlbum = async (artist, setArtist) => {
     try {
       let response = await fetch(
-        " https://striveschool-api.herokuapp.com/api/deezer/search?q=queen"
+        " https://striveschool-api.herokuapp.com/api/deezer/search?q=" + artist
       );
       if (response.ok) {
         let result = await response.json();
-
+        setArtist(result);
         dispatch({
           type: "GET_ALBUMS",
           payload: result,
@@ -38,7 +45,6 @@ const Main = () => {
     dispatch({
       type: "LOADING",
     });
-    fetchAlbum();
     // Randomizer di artisti Rock
     let rockRandomArtists = [];
     while (rockRandomArtists.length < 4) {
@@ -50,6 +56,10 @@ const Main = () => {
       }
     }
     console.log(rockRandomArtists);
+    fetchAlbum(rockRandomArtists[0], setArtist1);
+    fetchAlbum(rockRandomArtists[1], setArtist2);
+    fetchAlbum(rockRandomArtists[2], setArtist3);
+    fetchAlbum(rockRandomArtists[3], setArtist4);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -69,16 +79,24 @@ const Main = () => {
       </Row>
       {
         <Row className="text-light mt-3">
-          <Col xs={3}>
+          {/* <Col xs={3}>
             <Card>
               <Card.Img
                 variant="top"
                 src={fetchedAlbums && fetchedAlbums.data[0].album.cover_big}
               />
             </Card>
-            <p className="text-light text-center">{"albums.title"}</p>
-            <p className="text-light text-center">{"albums.artist.name"}</p>
-          </Col>
+            <p className="text-light text-center">
+              {fetchedAlbums && fetchedAlbums.data[0].title}
+            </p>
+            <p className="text-light text-center">
+              {fetchedAlbums && fetchedAlbums.data[0].artist.name}
+            </p>
+          </Col> */}
+          <SingleAlbum fetchedAlbums={artist1} />
+          <SingleAlbum fetchedAlbums={artist2} />
+          <SingleAlbum fetchedAlbums={artist3} />
+          <SingleAlbum fetchedAlbums={artist4} />
         </Row>
       }
     </>

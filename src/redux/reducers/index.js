@@ -1,5 +1,5 @@
 const initialState = {
-  albums: [],
+  albums: null,
   loading: true,
 };
 
@@ -8,7 +8,7 @@ const mainReducer = (state = initialState, action) => {
     case "GET_ALBUMS":
       return {
         ...state,
-        albums: [action.payload],
+        albums: action.payload,
       };
     case "LOADING":
       return {
