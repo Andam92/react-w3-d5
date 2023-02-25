@@ -1,13 +1,32 @@
-import { Col, Row, Card } from "react-bootstrap";
-import { useEffect, useState } from "react";
+import GenreRow from "./GenreRow";
 import { useDispatch, useSelector } from "react-redux";
-import SingleAlbum from "./Card";
+import { useEffect } from "react";
+import {
+  getRockAction,
+  getPopAction,
+  getHipHopAction,
+  fetchAlbumAction,
+} from "../redux/actions";
 
 const Main = () => {
-  const [artist1, setArtist1] = useState();
-  const [artist2, setArtist2] = useState();
-  const [artist3, setArtist3] = useState();
-  const [artist4, setArtist4] = useState();
+  // Use state
+
+  // const [artist1, setArtist1] = useState();
+  //   const [artist2, setArtist2] = useState();
+  //   const [artist3, setArtist3] = useState();
+  //   const [artist4, setArtist4] = useState();
+
+  // UseSelector
+  const dispatch = useDispatch();
+  const rockStateSlice = useSelector((state) => state.rock.rockAlbums);
+  const popStateSlice = useSelector((state) => state.pop.popAlbums);
+  const hipHopStateSlice = useSelector((state) => state.hipHop.hipHopAlbums);
+
+  // Array di generi
+
+  const genreArray = ["Rock Classic", "Pop Culture", "Hip Hop"];
+
+  // Array di artisti
 
   let rockArtists = [
     "queen",
@@ -20,48 +39,53 @@ const Main = () => {
     "bonjovi",
   ];
 
-  const dispatch = useDispatch();
-  const fetchedAlbums = useSelector((state) => state.albums);
-  console.log(fetchedAlbums);
-  const fetchAlbum = async (artist, setArtist) => {
-    try {
-      let response = await fetch(
-        " https://striveschool-api.herokuapp.com/api/deezer/search?q=" + artist
-      );
-      if (response.ok) {
-        let result = await response.json();
-        setArtist(result);
-        dispatch({
-          type: "GET_ALBUMS",
-          payload: result,
-        });
+  let popArtists = [
+    "maroon5",
+    "coldplay",
+    "onerepublic",
+    "jamesblunt",
+    "katyperry",
+    "arianagrande",
+  ];
+
+  let hipHopArtists = ["eminem", "snoopdogg", "lilwayne", "drake", "kanyewest"];
+
+  // Randomizer di artisti
+
+  const artistRandomizer = (artistArray) => {
+    let randomArtists = [];
+    while (randomArtists.length < 4) {
+      // pushes elements inside the array until it has 4 strings
+      let artist = artistArray[Math.floor(Math.random() * artistArray.length)]; // select an element from the array with an index between 0 and 7
+      if (!randomArtists.includes(artist)) {
+        // checks if the artist is not already present in the array
+        randomArtists.push(artist); // pushes the artist in the array
       }
-    } catch (error) {
-      console.log("⚠️ CATCH ERROR!", error);
     }
+    return randomArtists;
   };
 
+  // Salvo gli array di artisti random
+
+  const rockRandomizer = artistRandomizer(rockArtists);
+  const popRandomizer = artistRandomizer(popArtists);
+  const hipHopRandomizer = artistRandomizer(hipHopArtists);
+
+  // ARRAY delle porzioni di stato
+
+  const sliceArray = [rockStateSlice, popStateSlice, hipHopStateSlice];
+
+  // Eseguo fetch dinamici
+
   useEffect(() => {
-    dispatch({
-      type: "LOADING",
-    });
-    // Randomizer di artisti Rock
-    let rockRandomArtists = [];
-    while (rockRandomArtists.length < 4) {
-      // pushes elements inside the array until it has 4 strings
-      let artist = rockArtists[Math.floor(Math.random() * rockArtists.length)]; // select an element from the array with an index between 0 and 7
-      if (!rockRandomArtists.includes(artist)) {
-        // checks if the artist is not already present in the array
-        rockRandomArtists.push(artist); // pushes the artist in the array
-      }
-    }
-    console.log(rockRandomArtists);
-    fetchAlbum(rockRandomArtists[0], setArtist1);
-    fetchAlbum(rockRandomArtists[1], setArtist2);
-    fetchAlbum(rockRandomArtists[2], setArtist3);
-    fetchAlbum(rockRandomArtists[3], setArtist4);
+    dispatch(fetchAlbumAction(rockRandomizer[0], getRockAction)); // MA.... NON MANCA IL DISPATCH?? (cit.)
+    dispatch(fetchAlbumAction(popRandomizer[0], getPopAction));
+    dispatch(fetchAlbumAction(hipHopRandomizer[0], getHipHopAction));
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Render del componente
 
   return (
     <>
@@ -74,31 +98,11 @@ const Main = () => {
           <a href="#s">DISCOVER</a>
         </div>
       </div>
-      <Row className="text-light mt-5">
-        <h2>Rock Classics</h2>
-      </Row>
-      {
-        <Row className="text-light mt-3">
-          {/* <Col xs={3}>
-            <Card>
-              <Card.Img
-                variant="top"
-                src={fetchedAlbums && fetchedAlbums.data[0].album.cover_big}
-              />
-            </Card>
-            <p className="text-light text-center">
-              {fetchedAlbums && fetchedAlbums.data[0].title}
-            </p>
-            <p className="text-light text-center">
-              {fetchedAlbums && fetchedAlbums.data[0].artist.name}
-            </p>
-          </Col> */}
-          <SingleAlbum fetchedAlbums={artist1} />
-          <SingleAlbum fetchedAlbums={artist2} />
-          <SingleAlbum fetchedAlbums={artist3} />
-          <SingleAlbum fetchedAlbums={artist4} />
-        </Row>
-      }
+      {genreArray.map((genre, index) => (
+        <>
+          <GenreRow genre={genre} rockStateSlice={sliceArray[index]} />
+        </>
+      ))}
     </>
   );
 };
