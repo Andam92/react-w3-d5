@@ -90,7 +90,7 @@ const Main = () => {
   return (
     <>
       <div className="row">
-        <div className="col-9 col-lg-11 mainLinks d-none d-md-flex text-center">
+        <div className="col-12 col-md-9 offset-md-3 mainPage">
           <a href="#s">TRENDING</a>
           <a href="#s">PODCAST</a>
           <a href="#s">MOODS AND GENRES</a>

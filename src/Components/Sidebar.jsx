@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import logo from "../assets/img/Spotify_Logo.png";
 
 const Sidebar = () => {
@@ -24,15 +25,19 @@ const Sidebar = () => {
               <div className="navbar-nav">
                 <ul>
                   <li>
-                    <a className="nav-item nav-link" href="index.html">
-                      <i className="fas fa-home fa-lg"></i>&nbsp; Home
-                    </a>
+                    <Link to={"/"}>
+                      <p className="nav-item nav-link">
+                        <i className="fas fa-home fa-lg"></i>&nbsp; Home
+                      </p>
+                    </Link>
                   </li>
                   <li>
-                    <a className="nav-item nav-link" href="#bla">
-                      <i className="fas fa-book-open fa-lg"></i>&nbsp; Your
-                      Library
-                    </a>
+                    <Link to={"/"}>
+                      <p className="nav-item nav-link">
+                        <i className="fas fa-book-open fa-lg"></i>&nbsp; Your
+                        Library
+                      </p>
+                    </Link>
                   </li>
                   <li>
                     <div className="input-group mt-3">
